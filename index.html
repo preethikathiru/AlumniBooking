@@ -50,7 +50,6 @@
             divContainer.innerHTML = "";
             divContainer.appendChild(table);
         }
-
         function listalumni() {
             const url = 'http://localhost:4000/getalumni';
             fetch(url).then(res => {
@@ -64,13 +63,13 @@
                 console.log(err)
             })
         }
-
         function bookslot(obj) {
             var par = obj.parentNode;
             while (par.nodeName.toLowerCase() != 'tr') {
                 par = par.parentNode;
             }
-            var index = par.rowIndex;
+            var sub= par.rowIndex  ;
+            var index = sub-1;
             console.log(globalalumni[index], 'using index')
             table = document.getElementsByTagName("table");
             input = table[0].rows.item(index).getElementsByTagName("input");
@@ -94,7 +93,6 @@
             .then(function (data) {
                 console.log('Saved succes', data);
                 alert('saved succesfully')
-
             })
             .catch(err => {
                 console.log(err)
