@@ -6,41 +6,22 @@
 </head>
 
 <body>
-    <h1>WELCOME</h1>
+    <input type="button" onclick="listalumni()" value="alumnilist" id="showlist">
+    <p id="showData"></p>
 
-    <form method="post" action="/bookalumni">
-        <label>Select the slot</label><br>
-        <select id="alumni" name="alumnii">
-            <option value="Arun">Arun</option>
-            <option value="Preethi">Preethi</option>
-        </select>
-
-
-        <select id="date" name="dates">
-            <option input type="date">28 may 2017</option>
-            <option input type="date">30 apr 2018</option>
-            <option input type="date">01 jun 2019</option>
-            <option input type="date">04 jan 2019</option>
-
-        </select>
-        <input type="submit" value="book">
-        <input type="button" onclick="listdetails()" value="bookinglists" id="showlist">
-        <p id="showData"></p>
-    </form>
-
-
-    
     <script>
-        var bookings;
-
-        function jsontohtml(bookings) {
-            for (var i = 0; i < bookings.length; i++) {
-                for (var key in bookings[i]) {
+        var col = [];
+        var globalalumni;
+        function JsontoHtml(alumni) {
+            for (var i = 0; i < alumni.length; i++) {
+                for (var key in alumni[i]) {
                     if (col.indexOf(key) === -1) {
                         col.push(key);
                     }
+
                 }
             }
+            //col.push('date')
 
             var table = document.createElement("table");
             var tr = table.insertRow(-1);                   // TABLE ROW.
@@ -48,44 +29,87 @@
                 var th = document.createElement("th");      // TABLE HEADER.
                 th.innerHTML = col[i];
                 tr.appendChild(th);
+
+
             }
-            for (var i = 0; i < bookings.length; i++) {
+
+
+            for (var i = 0; i < alumni.length; i++) {
 
                 tr = table.insertRow(-1);
 
                 for (var j = 0; j < col.length; j++) {
                     var tabCell = tr.insertCell(-1);
-                    tabCell.innerHTML = bookings[i][col[j]];
+                    tabCell.innerHTML = alumni[i][col[j]];
+
                 }
-                var tabCell = tr.insertCell(-1);
-                    tabCell.innerHTML = 'accept'
+                var textbox = document.createElement("INPUT");
+                textbox.type = "Date";
+                tr.appendChild(textbox);
+
+                td1 = document.createElement("td")
+                var button = document.createElement('input');
+                button.setAttribute('type', 'button');
+                button.setAttribute('value', 'BOOK');
+                button.setAttribute('onclick', 'bookslot(this)');
+                console.log('Hello123')
+                td1.appendChild(button);
+                tr.appendChild(td1);
+                console.log('Hello123')
+
             }
             var divContainer = document.getElementById("showData");
             divContainer.innerHTML = "";
             divContainer.appendChild(table);
         }
-        function listdetails() {
 
-            console.log('inside function')
-            const url = 'http://localhost:3000/getlist';
-
-            fetch(url).then(response => {
-                return response.json();
-            }).then(bookings => {
-               //JsonBooking = bookings
-                console.log(bookings);
-                jsontohtml(bookings);
-            }).catch(err => {
-                console.log('unable to fetch  data')
+        function listalumni() {
+            const url = 'http://localhost:4000/getalumni';
+            fetch(url).then(res => {
+                return res.json();
+            }).then(alumni => {
+                console.log(alumni)
+                JsontoHtml(alumni)
+                globalalumni = alumni
             })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
+        function bookslot(obj) {
+
+            var par = obj.parentNode;
+            while (par.nodeName.toLowerCase() != 'tr') {
+                par = par.parentNode;
+            }
+            var index = par.rowIndex;
+            console.log(globalalumni[index], 'using index')
+            table = document.getElementsByTagName("table");
+            input = table[0].rows.item(index).getElementsByTagName("input");
+            console.log(input[0].value)
+            dataToBookApi = globalalumni[index];
+            dataToBookApi.date = input[0].value;
+            var datafetch = JSON.stringify(dataToBookApi);
+            console.log(JSON.stringify(dataToBookApi), 'dataToBookApi')
+            console.log(datafetch, 'final')
+
+            fetch("http://localhost:4000/bookslot", {
+                method: "POST",
+                body: JSON.stringify(datafetch)
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    console.log(datafetch)
+                })
+                .catch( err => {
+                    console.log(err)
+                })
 
         }
 
-        var col = [];
-        console.log(bookings)
 
 
     </script>
 </body>
-
-</html>

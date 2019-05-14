@@ -1,6 +1,6 @@
 var express = require("express"),
     app = express(),
-    port = 3000,
+    port = 4000,
     bodyParser = require('body-parser'),
     cors = require('cors'),
     mongoose = require("mongoose");
@@ -18,39 +18,38 @@ mongoose.connect("mongodb://node_demo:node_demo123@ds151222.mlab.com:51222/myfir
     })
 
 var bookingSchema = new mongoose.Schema({
-    alumniname: String,
-    date: Date
+    Student_name : String,
+    Alumni : String,
+    Date : Date,
+    Accepted : {  type : String, default : false}
 });
 var Bookingmodel = mongoose.model("booking", bookingSchema);
+
+var studentSchema = new mongoose.Schema({
+    name : String,
+    passed_out :  Boolean
+});
+var Studentmodel = mongoose.model("student",studentSchema);
 
 app.get("/", (req, res) => {
     res.sendFile(__dirname + "/index.html");
 });
-app.post("/bookalumni", (req, res) => {
-    console.log('inside bookalumni')
-    var receivedalumni = req.body.alumnii;
-    var receiveddate = req.body.dates;
-    var detailJson = { alumniname: receivedalumni, date: receiveddate }
-    var bookingmodelObject = new Bookingmodel(detailJson);
-    bookingmodelObject.save()
-        .then(item => {
-            console.log(item, 'received data');
-            res.send(item);
-        })
-        .catch(err => {
-            console.log(err)
-        })
-});
-app.get("/getlist", (req, res) => {
-    console.log('inside getlist');
-    Bookingmodel.find()
-        .then(item => {
-            res.send(item)
-        })
-        .catch(err => {
-            console.log(err)
-        })
+
+app.get("/getalumni",(req,res) => {
+    Studentmodel.find({ passed_out : true})
+    .then(item => {
+        res.send(item)
+    })
+    .catch(err => {
+        console.log(err)
+    })
 })
+
+// app.get("/bookslot", (req,res) =>  {
+    
+    
+// })
+
 app.listen(port, () => {
     console.log("Server listening on port " + port);
 });
