@@ -45,10 +45,20 @@ app.get("/getalumni",(req,res) => {
     })
 })
 
-// app.get("/bookslot", (req,res) =>  {
-    
-    
-// })
+app.post("/bookslot", (req,res) => {
+    console.log(req.body);
+    var bookingdata = {
+        Alumni : req.body.Alumni,
+        Student_name : req.body.Student_name,
+        Date : req.body.date
+    }
+    bookingObject = new Bookingmodel(bookingdata);
+    bookingObject.save().then(booking => {
+        res.send(booking);
+    }).catch(err => {
+        res.send(err);
+    })
+})
 
 app.listen(port, () => {
     console.log("Server listening on port " + port);
