@@ -4,7 +4,6 @@
   "description": "how store data in mongodb",
   "main": "app.js",
   "scripts": {
-    "web":  "app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
