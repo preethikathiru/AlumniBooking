@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Alumni</title>
 </head>
-
 <body>
     <input type="button" onclick="listbookings()" value="bookinglist" id="showbookings">
     <p id="showData"></p>
-
     <script>
+        var hostname = 'alumni-booking.herokuaapp.com'; //localhost:4000
         var globalbooking;
         var col = [];
         function JsonTohtml(booking) {
@@ -58,7 +56,7 @@
         }
         function listbookings() {
             var local = window.localStorage.getItem('token');
-            fetch("http://localhost:4000/getbookings", {
+            fetch("https://"+hostname+"/getbookings", {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -96,7 +94,7 @@
             }
             console.log(datatoedit, 'data to ediing')
             var local = window.localStorage.getItem('token');
-            fetch("http://localhost:4000/editbookings", {
+            fetch("https://"+hostname+"/editbookings", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -135,7 +133,7 @@
             }
             console.log(datatoedit, 'data to ediing')
             var local = window.localStorage.getItem('token');
-            fetch("http://localhost:4000/editbookings", {
+            fetch("https://"+hostname+"/editbookings", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',

@@ -20,7 +20,7 @@
                 Password: pass
             }
             console.log(Userinfo)
-            fetch("http://'+hostname+'/validateuser", {
+            fetch("https://"+hostname+"/validateuser", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -38,9 +38,9 @@
                         console.log(data.token  )
                         window.localStorage.setItem('token', data.token);
                         if(data.passed_out){
-                            location.replace(fetch("http://"+hostname+"/getbookinglist"))
+                            location.replace(fetch("https://"+hostname+"/getbookinglist"))
                         }else{
-                            location.replace(fetch("http://"+hostname))
+                            location.replace(fetch("https://"+hostname))
                         }
                     }
                     else {

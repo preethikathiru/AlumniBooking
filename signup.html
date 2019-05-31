@@ -15,7 +15,7 @@
     </select>
     <input type="submit" value="Signup" onclick="submit()">
     <script>
-
+        var hostname = 'alumni-booking.herokuaapp.com'; //localhost:4000
         function submit() {
             var user = document.getElementById('name1').value
             var pass = document.getElementById('pass1').value
@@ -26,7 +26,7 @@
                 passed_out : passed_out
             }
             console.log(Userinfo)
-            fetch("http://localhost:4000/adduser", {
+            fetch("https://"+hostname+"/adduser", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
