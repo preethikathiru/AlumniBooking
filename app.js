@@ -73,7 +73,7 @@ app.get("/", (req, res) => {
     res.render('signup');
 });
 
-app.get("/getbookinglist", (req, res) => {
+app.get("/alumnipage", (req, res) => {
     res.render('alumni');
 })
 

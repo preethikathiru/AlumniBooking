@@ -1,3 +1,6 @@
+
+if(loginValidation()){
+
 var hostname = config.hostname;
 var globalbooking;
 var col = [];
@@ -154,3 +157,6 @@ function rejectslot(obj) {
             alert('Some error in booking')
         })
 }
+
+}
+

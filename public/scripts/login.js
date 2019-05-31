@@ -26,7 +26,7 @@ function submit() {
                 window.localStorage.setItem('username', data.username);
                 window.localStorage.setItem('passedout', data.passed_out);
                 if (data.passed_out) {
-                    location.replace(hostname + "/getbookinglist")
+                    location.replace(hostname + "/alumnipage")
                 } else {
                     location.replace(hostname + "/studentpage")
                 }
@@ -40,4 +40,8 @@ function submit() {
             console.log(err);
             console.log('catch wrongly entered')
         })
+}
+
+function signup() {
+    location.replace(hostname)
 }

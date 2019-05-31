@@ -29,3 +29,7 @@ function submit() {
             alert('Some error in booking')
         })
 }
+
+function login() {
+    location.replace(hostname+"/login")
+}
