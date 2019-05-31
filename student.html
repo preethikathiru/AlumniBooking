@@ -9,6 +9,7 @@
     <input type="button" onclick="listalumni()" value="alumnilist" id="showlist">
     <p id="showData"></p>
     <script>
+        var hostname = 'alumni-booking.herokuaapp.com'; //localhost:4000
         var col = [];
         var globalalumni;
         function JsontoHtml(alumni) {
@@ -51,12 +52,12 @@
         }
         function listalumni() {
             var local = window.localStorage.getItem('token');
-            console.log(local,'token from browser')
-            fetch("http://localhost:4000/getalumni", {
+            console.log(local, 'token from browser')
+            fetch("http://'+hostname+/getalumni", {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
-                    'token' : local  
+                    'token': local
                 }
             })
                 .then(function (response) {
@@ -78,26 +79,26 @@
             while (par.nodeName.toLowerCase() != 'tr') {
                 par = par.parentNode;
             }
-            var index = par.rowIndex  ;
+            var index = par.rowIndex;
             alert(index);
             console.log(globalalumni[index], 'using index')
             var table = document.getElementsByTagName("table");
             var input = table[0].rows.item(index).getElementsByTagName("input");
 
-            console.log('Rows:',table[0].rows)
+            console.log('Rows:', table[0].rows)
             console.log(input[0].value)
             dataToBookApi = {
                 Student_name: 'Preethi',
-                Alumni: globalalumni[index-1].name,
+                Alumni: globalalumni[index - 1].name,
                 Date: input[0].value
             }
             console.log(dataToBookApi, 'dataToBookApi')
             var local = window.localStorage.getItem('token');
-            fetch("http://localhost:4000/bookslot", {
+            fetch("http://'+hostname+/bookslot", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
-                    'token' : local
+                    'token': local
                 },
                 body: JSON.stringify(dataToBookApi)
             })
