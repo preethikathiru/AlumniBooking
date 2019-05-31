@@ -175,6 +175,16 @@ app.post("/bookslot", (req, res) => {
     var validationJson = validateJWTToken(req.headers.token);
     if (validationJson.valid) {
         console.log(req.body);
+        var currentDate = new Date();
+        var bookingDate = new Date(req.body.Date);
+        var timeDiff = bookingDate.getTime() - currentDate.getTime();
+        var daysDiff = timeDiff / (1000 * 3600 * 24);
+        
+
+        if(daysDiff < 7){
+            return res.send({status :213,message : 'Please pick a date after a week'})
+        }
+        
         var bookingdata = {
             Alumni: req.body.Alumni,
             Student_name: req.body.Student_name,
@@ -182,13 +192,19 @@ app.post("/bookslot", (req, res) => {
         }
         console.log(req.body, 'boking')
         console.log(bookingdata, 'bookingdata')
-        bookingObject = new Bookingmodel(bookingdata);
-        bookingObject.save().then(booking => {
-            res.send(booking);
-            console.log(booking, 'json')
-        }).catch(err => {
-            res.send(err);
+        Bookingmodel.count({Student_name : req.body.Student_name}).then(count =>{
+            if(count >= 2){
+                return res.send({status :213,message : 'Only 2 bookings allowed'})
+            }
+            bookingObject = new Bookingmodel(bookingdata);
+            bookingObject.save().then(booking => {
+                res.send(booking);
+                console.log(booking, 'json')
+            }).catch(err => {
+                res.send(err);
+            })
         })
+       
     } else {
         console.log('in else')
         res.send({
@@ -198,10 +214,19 @@ app.post("/bookslot", (req, res) => {
 });
 app.get("/getbookings", (req, res) => {
     var alumniName = req.query.alumniName;
+    var studentname = req.query.studentname;
+    var queryCondition ={};
+    if(alumniName){
+        queryCondition.Alumni = alumniName;
+    }
+    if(studentname){
+        queryCondition.Student_name = studentname;
+    }
+
     console.log(req.headers.token, 'inside getbookings');
     var validationJson = validateJWTToken(req.headers.token);
     if (validationJson.valid) {
-        Bookingmodel.find({Alumni : alumniName})
+        Bookingmodel.find(queryCondition)
             .then(item => {
                 res.send(item)
                 console.log('then')

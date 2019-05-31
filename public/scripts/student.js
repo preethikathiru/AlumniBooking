@@ -1,10 +1,12 @@
 var hostname = config.hostname;
-var col = [];
+
 var globalalumni;
 listalumni();
-function JsontoHtml(alumni) {
-    for (var i = 0; i < alumni.length; i++) {
-        for (var key in alumni[i]) {
+myBookings();
+function JsontoHtml(list,htmlId) {
+    var col = [];
+    for (var i = 0; i < list.length; i++) {
+        for (var key in list[i]) {
             if (col.indexOf(key) === -1) {
                 col.push(key);
             }
@@ -17,26 +19,26 @@ function JsontoHtml(alumni) {
         th.innerHTML = col[i];
         tr.appendChild(th);
     }
-    for (var i = 0; i < alumni.length; i++) {
+    for (var i = 0; i < list.length; i++) {
         tr = table.insertRow(-1);
         for (var j = 0; j < col.length; j++) {
             var tabCell = tr.insertCell(-1);
-            tabCell.innerHTML = alumni[i][col[j]];
+            tabCell.innerHTML = list[i][col[j]];
         }
-        var textbox = document.createElement("INPUT");
-        textbox.type = "Date";
-        tr.appendChild(textbox);
-        td1 = document.createElement("td")
-        var button = document.createElement('input');
-        button.setAttribute('type', 'button');
-        button.setAttribute('value', 'BOOK');
-        button.setAttribute('onclick', 'bookslot(this)');
-        console.log('Hello123')
-        td1.appendChild(button);
-        tr.appendChild(td1);
-        console.log('Hello123')
+        if(htmlId != 'myBookings'){
+            var textbox = document.createElement("INPUT");
+            textbox.type = "Date";
+            tr.appendChild(textbox);
+            td1 = document.createElement("td")
+            var button = document.createElement('input');
+            button.setAttribute('type', 'button');
+            button.setAttribute('value', 'BOOK');
+            button.setAttribute('onclick', 'bookslot(this)');
+            td1.appendChild(button);
+            tr.appendChild(td1);
+        }
     }
-    var divContainer = document.getElementById("showData");
+    var divContainer = document.getElementById(htmlId);
     divContainer.innerHTML = "";
     divContainer.appendChild(table);
 }
@@ -55,13 +57,36 @@ function listalumni() {
         })
         .then(alumni => {
             console.log(alumni)
-            JsontoHtml(alumni)
+            JsontoHtml(alumni,'showData')
             globalalumni = alumni
         })
         .catch(err => {
             console.log(err)
         })
 
+}
+
+function myBookings() {
+    var local = window.localStorage.getItem('token');
+    var username = window.localStorage.getItem('username');
+    console.log(local, 'token from browser')
+    fetch(hostname + "/getbookings?studentname="+username, {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+            'token': local
+        }
+    })
+        .then(function (response) {
+            return response.json();
+        })
+        .then(bookings => {
+            console.log(bookings)
+            JsontoHtml(bookings,'myBookings')
+        })
+        .catch(err => {
+            console.log(err)
+        })
 }
 
 function bookslot(obj) {
@@ -98,8 +123,11 @@ function bookslot(obj) {
             return response.json();
         })
         .then(function (data) {
-            console.log('Saved succes', data);
-            alert('saved succesfully')
+            if(!handleFetchResponse(data))
+            {
+                console.log('Saved succes', data);
+                alert('saved succesfully')
+            }
         })
         .catch(err => {
             console.log(err)
