@@ -11,6 +11,7 @@
     Password: <input type="password" id="pass1"><br>
     <input type="submit" value="Login" onclick="submit()">
     <script>
+        var hostname = 'alumni-booking.herokuaapp.com'; //localhost:4000
         function submit() {
             var user = document.getElementById('name1').value
             var pass = document.getElementById('pass1').value
@@ -19,7 +20,7 @@
                 Password: pass
             }
             console.log(Userinfo)
-            fetch("http://localhost:4000/validateuser", {
+            fetch("http://'+hostname+'/validateuser", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -37,9 +38,9 @@
                         console.log(data.token  )
                         window.localStorage.setItem('token', data.token);
                         if(data.passed_out){
-                            location.replace("http://localhost:4000/getbookinglist")
+                            location.replace(fetch("http://"+hostname+"/getbookinglist"))
                         }else{
-                            location.replace("http://localhost:4000")
+                            location.replace(fetch("http://"+hostname))
                         }
                     }
                     else {
