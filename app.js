@@ -1,15 +1,22 @@
 var express = require("express"),
     app = express(),
+    path = require('path'),
     port = 4000,
     bodyParser = require('body-parser'),
     cors = require('cors'),
     mongoose = require("mongoose");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+var mustacheExpress = require('mustache-express');
 
+app.engine('html', mustacheExpress());
+app.set('view engine', 'html');
+app.set('views', path.join(__dirname, '/views'));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 
 mongoose.Promise = global.Promise;
 mongoose.connect("mongodb://node_demo:node_demo123@ds151222.mlab.com:51222/myfirstdb")
@@ -56,22 +63,27 @@ var validateJWTToken = function (token) {
     }
 }
 
+app.use(express.static(__dirname + '/pubic/scripts'));
+
+app.get('/health', function(req, res) {
+  res.send(200);
+});
+
 app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/student.html");
+    res.render('signup');
 });
 
 app.get("/getbookinglist", (req, res) => {
-    res.sendFile(__dirname + "/alumni.html")
+    res.render('alumni');
 })
 
-app.get("/signup", (req, res) => {
-    res.sendFile(__dirname + "/signup.html")
+app.get("/studentpage", (req, res) => {
+    res.render('student');
 })
 
 app.get("/login", (req, res) => {
-    res.sendFile(__dirname + "/login.html")
+    res.render('login');
 })
-
 app.post("/adduser", (req, res) => {
     let hash = bcrypt.hashSync(req.body.Password, 10);
     console.log(req.body.Username, 'username')
@@ -115,6 +127,7 @@ app.post("/validateuser", (req, res) => {
                     return res.status(200).json({
                         success: 'true',
                         token: JWTToken,
+                        username: item.Username,
                         passed_out : item.passed_out
                     });
                 }
@@ -129,12 +142,7 @@ app.post("/validateuser", (req, res) => {
                 error: 'Db error'
             })
         })
-
-
 })
-
-
-
 app.get("/getalumni", (req, res) => {
     console.log(req.headers.token, 'inside getalumni');
     var validationJson = validateJWTToken(req.headers.token);
@@ -162,12 +170,11 @@ app.get("/getalumni", (req, res) => {
         })
     }
 });
-
 app.post("/bookslot", (req, res) => {
     console.log(req.headers.token, 'inside bookslot');
     var validationJson = validateJWTToken(req.headers.token);
     if (validationJson.valid) {
-        ///console.log(req.body);
+        console.log(req.body);
         var bookingdata = {
             Alumni: req.body.Alumni,
             Student_name: req.body.Student_name,
@@ -188,14 +195,13 @@ app.post("/bookslot", (req, res) => {
             data: validationJson
         })
     }
-
 });
-
 app.get("/getbookings", (req, res) => {
+    var alumniName = req.query.alumniName;
     console.log(req.headers.token, 'inside getbookings');
     var validationJson = validateJWTToken(req.headers.token);
     if (validationJson.valid) {
-        Bookingmodel.find()
+        Bookingmodel.find({Alumni : alumniName})
             .then(item => {
                 res.send(item)
                 console.log('then')
@@ -212,7 +218,6 @@ app.get("/getbookings", (req, res) => {
     }
 
 })
-
 app.post("/editbookings", (req, res) => {
 
     console.log('my login token', req.headers.token)
@@ -236,12 +241,7 @@ app.post("/editbookings", (req, res) => {
             data: validationJson
         })
     }
-
-
-
 })
-
-
 app.listen(process.env.PORT || port, () => {
     console.log("Server listening on port " + port);
 });
