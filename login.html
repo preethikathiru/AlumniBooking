@@ -4,21 +4,21 @@
 <head>
     <title>LOGIN</title>
 </head>
+
 <body>
-    
-        Name: <input type="text"  id="name1"><br>
-        Password: <input type="password"  id="pass1"><br>
-        <input type="submit" value="Login" onclick="submit()">
-        <script>
-        function submit(){
-            var user =  document.getElementById('name1').value
+
+    Name: <input type="text" id="name1"><br>
+    Password: <input type="password" id="pass1"><br>
+    <input type="submit" value="Login" onclick="submit()">
+    <script>
+        function submit() {
+            var user = document.getElementById('name1').value
             var pass = document.getElementById('pass1').value
-            Userinfo ={
-                Username : user,
-                Password :  pass
+            Userinfo = {
+                Username: user,
+                Password: pass
             }
             console.log(Userinfo)
-            userinfo = null;
             fetch("http://localhost:4000/validateuser", {
                 method: "POST",
                 headers: {
@@ -26,28 +26,32 @@
                 },
                 body: JSON.stringify(Userinfo)
             })
-            .then(function (response) {
-                console.log('here')
-                return response.json();
-            })
-            .then(function (data) {
-                console.log(data,'data')
-                if(data.success){
-                    alert('verified succesfully')
-                }
-                else{
-                    console.log('second wrong')
-                    alert('wrongly second entered')
-                }
-                //console.log('validated successfully', data);
-               // alert('saved succesfully')
-            })
-            .catch(err => {
-                console.log(err);
-                console.log('catch wrongly entered')
-                //alert('wrongly entered')
-            })
+                .then(function (response) {
+                    console.log('here')
+                    return response.json();
+                })
+                .then(function (data) {
+                    console.log(data, 'data')
+                    if (data.success) {
+                        alert('verified succesfully')
+                        console.log(data.token  )
+                        window.localStorage.setItem('token', data.token);
+                        if(data.passed_out){
+                            location.replace("http://localhost:4000/getbookinglist")
+                        }else{
+                            location.replace("http://localhost:4000")
+                        }
+                    }
+                    else {
+                        console.log('second wrong')
+                        alert('User not found ')
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                    console.log('catch wrongly entered')
+                })
         }
-        </script>
-        
+    </script>
+
 </body>

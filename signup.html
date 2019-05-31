@@ -4,18 +4,26 @@
 <head>
     <title> SIGNUP</title>
 </head>
+
 <body>
-    
-        Name: <input type="text"  id="name1"><br>
-        Password: <input type="password"  id="pass1"><br>
-        <input type="submit" value="Login" onclick="submit()">
-        <script>
-        function submit(){
-            var user =  document.getElementById('name1').value
+
+    Name: <input type="text" id="name1"><br>
+    Password: <input type="password" id="pass1"><br>
+    Passed out: <select id = "passed_out1">
+        <option value="true">True</option>
+        <option value="false">False</option>
+    </select>
+    <input type="submit" value="Signup" onclick="submit()">
+    <script>
+
+        function submit() {
+            var user = document.getElementById('name1').value
             var pass = document.getElementById('pass1').value
-            Userinfo ={
-                Username : user,
-                Password :  pass
+            var passed_out = document.getElementById('passed_out1').value
+            Userinfo = {
+                Username: user,
+                Password: pass,
+                passed_out : passed_out
             }
             console.log(Userinfo)
             fetch("http://localhost:4000/adduser", {
@@ -25,18 +33,18 @@
                 },
                 body: JSON.stringify(Userinfo)
             })
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                console.log('Saved succes', data);
-                alert('saved succesfully')
-            })
-            .catch(err => {
-                console.log(err)
-                alert('Some error in booking')
-            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    console.log('Saved succes', data);
+                    alert('saved succesfully')
+                })
+                .catch(err => {
+                    console.log(err)
+                    alert('Some error in booking')
+                })
         }
-        </script>
-        
+    </script>
+
 </body>

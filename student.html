@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Student</title>
+</head>
+
+<body>
+    <input type="button" onclick="listalumni()" value="alumnilist" id="showlist">
+    <p id="showData"></p>
+    <script>
+        var col = [];
+        var globalalumni;
+        function JsontoHtml(alumni) {
+            for (var i = 0; i < alumni.length; i++) {
+                for (var key in alumni[i]) {
+                    if (col.indexOf(key) === -1) {
+                        col.push(key);
+                    }
+                }
+            }
+            var table = document.createElement("table");
+            var tr = table.insertRow(-1);                   // TABLE ROW.
+            for (var i = 0; i < col.length; i++) {
+                var th = document.createElement("th");      // TABLE HEADER.
+                th.innerHTML = col[i];
+                tr.appendChild(th);
+            }
+            for (var i = 0; i < alumni.length; i++) {
+                tr = table.insertRow(-1);
+                for (var j = 0; j < col.length; j++) {
+                    var tabCell = tr.insertCell(-1);
+                    tabCell.innerHTML = alumni[i][col[j]];
+                }
+                var textbox = document.createElement("INPUT");
+                textbox.type = "Date";
+                tr.appendChild(textbox);
+                td1 = document.createElement("td")
+                var button = document.createElement('input');
+                button.setAttribute('type', 'button');
+                button.setAttribute('value', 'BOOK');
+                button.setAttribute('onclick', 'bookslot(this)');
+                console.log('Hello123')
+                td1.appendChild(button);
+                tr.appendChild(td1);
+                console.log('Hello123')
+            }
+            var divContainer = document.getElementById("showData");
+            divContainer.innerHTML = "";
+            divContainer.appendChild(table);
+        }
+        function listalumni() {
+            var local = window.localStorage.getItem('token');
+            console.log(local,'token from browser')
+            fetch("http://localhost:4000/getalumni", {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'token' : local  
+                }
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(alumni => {
+                    console.log(alumni)
+                    JsontoHtml(alumni)
+                    globalalumni = alumni
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+
+        }
+
+        function bookslot(obj) {
+            var par = obj.parentNode;
+            while (par.nodeName.toLowerCase() != 'tr') {
+                par = par.parentNode;
+            }
+            var index = par.rowIndex  ;
+            alert(index);
+            console.log(globalalumni[index], 'using index')
+            var table = document.getElementsByTagName("table");
+            var input = table[0].rows.item(index).getElementsByTagName("input");
+
+            console.log('Rows:',table[0].rows)
+            console.log(input[0].value)
+            dataToBookApi = {
+                Student_name: 'Preethi',
+                Alumni: globalalumni[index-1].name,
+                Date: input[0].value
+            }
+            console.log(dataToBookApi, 'dataToBookApi')
+            var local = window.localStorage.getItem('token');
+            fetch("http://localhost:4000/bookslot", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'token' : local
+                },
+                body: JSON.stringify(dataToBookApi)
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    console.log('Saved succes', data);
+                    alert('saved succesfully')
+                })
+                .catch(err => {
+                    console.log(err)
+                    alert('Some error in booking')
+                })
+        }
+
+    </script>
+</body>

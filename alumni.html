@@ -57,14 +57,22 @@
 
         }
         function listbookings() {
-            const url = 'http://localhost:4000/getbookings';
-            fetch(url).then(res => {
-                return res.json();
-            }).then(booking => {
-                console.log(booking)
-                JsonTohtml(booking)
-                globalbooking = booking;
+            var local = window.localStorage.getItem('token');
+            fetch("http://localhost:4000/getbookings", {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'token': local
+                }
             })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(booking => {
+                    console.log(booking)
+                    JsonTohtml(booking)
+                    globalbooking = booking;
+                })
                 .catch(err => {
                     console.log(err)
                 })
@@ -87,10 +95,12 @@
 
             }
             console.log(datatoedit, 'data to ediing')
+            var local = window.localStorage.getItem('token');
             fetch("http://localhost:4000/editbookings", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
+                    'token' : local
                 },
                 body: JSON.stringify(datatoedit)
             })
@@ -100,7 +110,6 @@
                 })
                 .then(function (data) {
                     console.log('Saved successfully', data);
-                   // console.log(datatoedit)
                 })
                 .catch(err => {
                     console.log(err)
@@ -121,15 +130,16 @@
                 Alumni: globalbooking[j].Alumni,
                 Date: globalbooking[j].Date,
                 Accepted: 'false',
-                _id :  globalbooking[j]._id
+                _id: globalbooking[j]._id
 
             }
             console.log(datatoedit, 'data to ediing')
-            //console.log(globalbooking[j], 'using index')
+            var local = window.localStorage.getItem('token');
             fetch("http://localhost:4000/editbookings", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
+                    'token' : local
                 },
                 body: JSON.stringify(datatoedit)
             })
@@ -138,7 +148,6 @@
                 })
                 .then(function (data) {
                     console.log('Saved successfully', data);
-                    //alert('saved succesfully')
                 })
                 .catch(err => {
                     console.log(err)
