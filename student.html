@@ -53,7 +53,7 @@
         function listalumni() {
             var local = window.localStorage.getItem('token');
             console.log(local, 'token from browser')
-            fetch("https://'+hostname+/getalumni", {
+            fetch("https://"+hostname+"/getalumni", {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -94,7 +94,7 @@
             }
             console.log(dataToBookApi, 'dataToBookApi')
             var local = window.localStorage.getItem('token');
-            fetch("https://'+hostname+/bookslot", {
+            fetch("https://"+hostname+"/bookslot", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
